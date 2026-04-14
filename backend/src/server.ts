@@ -1,17 +1,14 @@
-import morgan from "morgan";
 import env from "./utils/validation.ts"
-import express from "express";
-import mongoose from "mongoose";
+import { initDB } from "./db.ts";
+import { initAuth } from "./utils/auth.ts";
+import createApp from "./app.ts";
 
 const port = env.PORT;
 
 try {
-    const app = express();
-    app.use(morgan("dev"));
-    app.use(express.json());
-
-    await mongoose.connect(env.MONGO_CONNECTION_STRING);
-    console.log("Mongoose connected");
+    const [db, client] = await initDB(env.MONGO_CONNECTION_STRING);
+    const auth = initAuth(db, client);
+    const app = createApp(auth);
 
     app.listen(port, () => {
         console.log("Server running on port: " + port);
