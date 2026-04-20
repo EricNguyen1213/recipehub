@@ -1,16 +1,19 @@
-import logo from "../../assets/logo.png";
-import logoText from "../../assets/logoText.png";
+import logo from "../../assets/images/logo.png";
+import logoText from "../../assets/images/logoText.png";
+import { BiSolidFoodMenu } from "react-icons/bi";
 
 
 export default function NavBar() {
   return (
-    <nav className="bg-white w-full py-2 grid grid-cols-[1fr_2fr_1fr] ">
-      <section className="flex justify-center items-center gap-3">
-        <img className="w-14" src={logo} alt="Logo" />
-        <img className="w-50" src={logoText} alt="Shop4Food" />
-      </section>
-      <section className="">
-        hi
+    <nav className="bg-white w-full grid grid-cols-[1fr_3fr] h-15 shadow-xl/20 sticky top-0 z-50">
+      <section className="grid grid-cols-[1fr_4fr]">
+        <div className="ml-auto my-auto">
+            <BiSolidFoodMenu size="2.5em" className="text-mydarkgreen" />
+        </div>
+        <div className="flex gap-1 m-auto">
+            <img className="w-10" src={logo} alt="Logo" />
+            <img className="w-40" src={logoText} alt="Shop4Food" />
+        </div>
       </section>
       <section className="">
         my

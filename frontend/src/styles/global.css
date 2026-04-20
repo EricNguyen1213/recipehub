@@ -5,11 +5,31 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+  font-family: 'HeaderFont';
+  src: url('/src/assets/fonts/BorderWall-OG55o.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DescFont';
+  src: url('/src/assets/fonts/DroplineRegular-Wpegz.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme inline {
     --color-mydarkgreen: #0b4518;
+    --color-mydarkgreentransparent: #0b451880;
     --color-mylightgreen: #D5ED9F;
     --color-mydarkwhite: #FAF6E9;
     --color-mybrightwhite: #FFFDF6;
+
+    --font-header: "HeaderFont", sans-serif;
+    --font-desc: "DescFont", sans-serif;
 
     --font-heading: var(--font-sans);
     --font-sans: 'Inter Variable', sans-serif;
@@ -132,4 +152,10 @@
   html {
     @apply font-sans;
     }
+}
+
+html, body, #root {
+  width: 100vw;
+  height: 100%;
+  margin: 0;
 }
