@@ -3,10 +3,26 @@ import Autoplay from "embla-carousel-autoplay"
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "./ui/carousel";
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
-import LilChef from "@/assets/components/lilChef";
+import { LilChef, CookingLilChef, WavingLilChef } from "@/assets/components/lilChef";
 import { FiEdit3 } from "react-icons/fi";
 import { Button } from "@/components/ui/button";
-import shelf from "../assets/images/shelf.png";
+
+
+const images = import.meta.glob<{ default: string }>('../assets/images/*.{png,jpg,jpeg,svg}', { eager: true });
+
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 768px)");
+    const listener = () => setIsMobile(media.matches);
+    listener();
+    media.addEventListener("change", listener);
+    return () => media.removeEventListener("change", listener);
+  }, []);
+
+  return isMobile;
+};
 
 
 export default function Home() {
@@ -243,7 +259,33 @@ export default function Home() {
         },
     ]
 
+    const storeTags = [
+        {
+            store: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Target_logo.svg/500px-Target_logo.svg.png",
+            price: "$3.69"
+        },
+        {
+            store: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Walmart_logo_%282008%2C_stacked%29.svg/1920px-Walmart_logo_%282008%2C_stacked%29.svg.png",
+            price: "$3.12"
+        },
+        {
+            store: "https://www.freepnglogos.com/uploads/costco-png-logo/corrugated-shipping-crates-costco-png-logo-13.png",
+            price: "$4.99"
+        },
+        {
+            store: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Whole_Foods_Market_201x_logo.svg/3840px-Whole_Foods_Market_201x_logo.svg.png",
+            price: "$1.85"
+        },
+        {
+            store: images['../assets/images/safeway.png']?.default,
+            price: "$3.29"
+        }
+    ]
+
     const [frontRecipe, changeRecipe] = useState(originalRecipe);
+    const isMobile = useIsMobile();
+    const [cartAniDone, setCartAniDone] = useState(false);
+
 
     const [api, setApi] = useState<CarouselApi>()
     const [isIngExpanded, setIsIngExpanded] = useState(false)
@@ -282,21 +324,26 @@ export default function Home() {
         };
     }, [api]);
 
+    const steamTrigger = useRef(null);
+    const startSteam = useInView(steamTrigger, {once: true, amount: "all"});
+
     return (
         <main>
             <section className="relative w-full">
                 <div className="absolute inset-0 bg-[url('/src/assets/images/home1.jpg')] bg-cover grayscale"></div>
-                <div className="relative z-10">
+                <div className="relative z-10 lg:grid lg:grid-cols-[2fr_3fr]">
                     <div className="bg-white text-mydarkgreen flex py-18 justify-center">
                         <div className="flex flex-col gap-2.5 mx-7 my-auto">
-                            <h2 className="font-header leading-tight text-3xl">Your Kitchen, Optimized</h2>
-                            <ul className="list-disc pl-5.5 font-desc flex flex-col gap-1 text-[1.2rem]">
+                            <h2 className="font-header leading-tight text-3xl lg:text-5xl">Your Kitchen, Optimized</h2>
+                            <ul className="list-disc pl-5.5 font-desc flex flex-col gap-1 text-[1.2rem lg:text-2xl">
                                 <li>Share recipes</li>
                                 <li>Sync with local store prices</li>
                                 <li>Tailor meals to your pantry & tools with AI</li>
                             </ul>
                             <div className="flex justify-center mt-2">
-                                <Button className="bg-mydarkgreen rounded-lg text-white" variant="default" size="lg">
+                                <Button 
+                                    className="bg-mydarkgreen text-white py-7 px-10 font-desc  border-lime-500 rounded-xl mt-5 active:bg-lime-500 text-2xl"
+                                >
                                     <span className="text-white">Start Your Smart List</span>
                                     <FiEdit3 />
                                 </Button>
@@ -318,7 +365,12 @@ export default function Home() {
                                 <img className="rounded-t-lg" src="https://amandascookin.com/wp-content/uploads/2025/08/Italian-Lasagna-RCSQ.jpg" />
                             </div>
                             <div className="w-full relative">
-                                <LilChef className="absolute top-5 right-[-110px]" isTriggered={startChef} wholeScale={0.25} />
+                                <LilChef 
+                                    className="absolute top-5 -right-27.5" 
+                                    isTriggered={startChef} 
+                                    wholeScale={0.25} 
+                                    delayTime={4}
+                                />
                                 <div className="text-center flex flex-col justify-evenly">
                                     <AnimatePresence mode="wait">
                                         <motion.h3
@@ -362,7 +414,7 @@ ${isIngExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                                             </div>
                                             <AnimatePresence mode="wait">
                                                 <motion.button 
-                                                    onViewportEnter={() => changeRecipe(updatedRecipe)}
+                                                    onViewportEnter={() => {setTimeout(() => {changeRecipe(updatedRecipe)}, 5000)}}
                                                     viewport={{once: true, amount: "all"}}
                                                     ref={chefTrigger1}
                                                     onClick={() => setIsIngExpanded(!isIngExpanded)}
@@ -401,7 +453,7 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                                             </div>
                                             <AnimatePresence mode="wait">
                                                 <motion.button 
-                                                    onViewportEnter={() => changeRecipe(updatedRecipe)}
+                                                    onViewportEnter={() => {setTimeout(() => {changeRecipe(updatedRecipe)}, 5000)}}
                                                     viewport={{once: true, amount: "all"}}
                                                     ref={chefTrigger2}
                                                     onClick={() => setIsRecExpanded(!isRecExpanded)}
@@ -425,22 +477,22 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                 </div>
             </section>
             <section className="w-full bg-[url('/src/assets/images/foodCollage.jpg')] bg-cover">
-                <div className="bg-[rgba(255,255,255,0.85)]">
+                <div className="bg-[rgba(255,255,255,0.85)] overflow-x-hidden py-18 md:py-25 bg-linear-to-b from-white via-transparent to-white">
                     <motion.div
                         initial={{ opacity: 0, x: 100 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ 
                             once: true,
-                            amount: 0.25
+                            margin: "0px 0px -500px 0px"
                         }}
                         transition={{ duration: 0.8 }}
                     >
-                        <div className="w-full p-10">
-                            <div className="max-w-xl m-auto">
-                                <h2 className="font-header text-lime-500 text-xl">Explore</h2>
-                                <h3 className="font-header text-mydarkgreen font-extrabold text-3xl mb-2">Fresh From the Community</h3>
-                                <p className="font-desc text-mydarkgreen text-[1.2rem] leading-snug">Browse thousands of recipes tailored by real cooks and our AI Sous Chef. From 15-minute pantry meals to gourmet weekend feasts.</p>
-                                <Button className="py-5 px-10 font-desc text-lime-500 border-lime-500 rounded-xl mt-3 active:bg-lime-500 active:text-white text-xl" variant="outline">
+                        <div className="w-full p-10 pb-20">
+                            <div className="max-w-xl m-auto lg:max-w-3xl">
+                                <h2 className="font-header text-lime-500 text-xl lg:text-3xl lg:mb-2">Explore</h2>
+                                <h3 className="font-header text-mydarkgreen font-extrabold text-3xl lg:text-5xl mb-3">Fresh From the Community</h3>
+                                <p className="font-desc text-mydarkgreen text-[1.2rem] lg:text-2xl leading-snug">Browse thousands of recipes tailored by real cooks and our AI Sous Chef. From 15-minute pantry meals to gourmet weekend feasts.</p>
+                                <Button className="py-7 px-10 font-desc text-lime-500 border-lime-500 rounded-xl mt-5 active:bg-lime-500 active:text-white text-2xl" variant="outline">
                                     See More Recipes                                      
                                 </Button>
                             </div>
@@ -451,7 +503,7 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                         >
                             <CarouselContent className="w-full m-auto pb-12">
                                 {seeMoreFoods.map((item, index) => (
-                                    <CarouselItem key={index} className="w-full p-0">
+                                    <CarouselItem key={index} className="w-full p-0 md:basis-1/2 lg:basis-1/3 2xl:basis-1/5">
                                         <div className="bg-white w-2xs flex m-auto rounded-xl border-2 border-lime-500 shadow-xl">
                                             <img className="w-3/5 h-50 object-cover rounded-l-xl" src={item.img} alt={item.title}></img>
                                             <div className="w-2/5">
@@ -470,18 +522,140 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                     </motion.div>
                 </div>
             </section>
-            <section className="w-full bg-[url('https://t3.ftcdn.net/jpg/03/36/04/70/360_F_336047008_Qcs4jF2IiXIc6PMeJsM1sVrNONexVdxm.jpg')]">
-                <img className="w-11/12 m-auto mask-b-to-transparent" src={shelf} />
-                <div className="w-full p-10">
-                    <div className="max-w-xl m-auto">
-                        <h2 className="font-header text-lime-500 text-xl">About</h2>
-                        <h3 className="font-header text-mydarkgreen font-extrabold text-3xl mb-2">Know the cost before you go</h3>
-                        <p className="font-desc text-mydarkgreen text-[1.2rem] leading-snug">We scan local aisles via API to find your ingredients. If they’re out of stock, we don’t just tell you—we suggest a swap and update the recipe instructions instantly.</p>
-                        <Button className="py-5 px-10 font-desc text-lime-500 border-lime-500 rounded-xl mt-3 active:bg-lime-500 active:text-white text-xl" variant="outline">
-                            See More Recipes                                      
-                        </Button>
+            <section className="relative w-full bg-white overflow-hidden pb-30">
+                <div className="md:grid md:grid-cols-[1fr_1fr]">
+                    <div className="relative z-10 pt-[min(70vw,350px)] px-10 md:px-15 lg:px-30 md:pt-[min(35vw,350px)]">
+                        <div className="relative flex flex-col justify-center items-center">
+                            <motion.img 
+                                className="absolute w-11/12 max-w-75 md:-translate-y-8" 
+                                src={images['../assets/images/cart.png']?.default} 
+                                alt="Shopping Cart"
+                                initial={{ x: 0 }}
+                                whileInView={{ x: isMobile ? "100vw" : "50vw" }}
+                                viewport={{ 
+                                    once: true,
+                                    amount: 1
+                                }}
+                                transition={{ duration: 1.3 }}
+                            />
+                            <motion.div 
+                                className="max-w-xl m-auto"
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ 
+                                    once: true,
+                                    amount: 1
+                                }}
+                                transition={{ duration: 0.8 }}
+                                onAnimationComplete={() => setCartAniDone(true)}
+                            >
+                                <h2 className="font-header text-lime-500 text-xl lg:text-3xl">Shop Smart</h2>
+                                <h3 className="font-header text-mydarkgreen font-extrabold text-3xl mb-3 lg:text-5xl">Know the cost before you go!</h3>
+                                <p className="font-desc text-mydarkgreen text-[1.2rem] leading-snug lg:text-2xl">We scan local aisles via API to find your ingredients. If they’re out of stock, we don’t just tell you—we suggest a swap and update the recipe instructions instantly.</p>
+                            </motion.div>
+                
+                        </div>
+                    </div>
+                    <div className="md:relative">
+                        <img className="absolute top-25 w-11/12 left-1/2 -translate-x-1/2 mask-b-to-50% max-w-xl" src={images['../assets/images/shelf.png']?.default} alt="Shelf of Food Background" />
                     </div>
                 </div>
+                <div className="flex flex-wrap justify-center gap-5 px-10 mt-10">
+                    {storeTags.map((item, index) => (      
+                        <motion.div 
+                            key={index}
+                            className="h-13 flex items-center bg-white border-2 border-mydarkgreen py-1 px-2 gap-3 rounded-3xl shadow-lg"
+                            initial={{ opacity: 0, x: 20, y: 20}}
+                            animate={ cartAniDone ? { opacity: 1, x: 0, y: 0 } : {}}
+                            transition={{ delay: (index * 0.2) }}
+                        >
+                            <img className="max-h-full max-w-25" src={item.store} />
+                            <h4 className="font-desc text-2xl text-mydarkgreen">{item.price}</h4>
+                        </motion.div>
+                    ))}
+                </div>
+            </section>
+            <section className="bg-white md:grid md:grid-cols-2 ">
+                <div className="order-2 relative w-full px-10 md:px-15 lg:px-30 pt-30 pb-50">
+                    <CookingLilChef 
+                        className="absolute z-10 left-1/2 -translate-x-3/4 pointer-events-none" 
+                        isTriggered={startSteam} 
+                        wholeScale={0.40} 
+                    />
+                    <motion.div 
+                        ref={steamTrigger} 
+                        className="max-w-xl m-auto"
+                        initial={{opacity: 0, y: 0}}
+                        animate={startSteam ? {opacity: 1, y: 0} : {}}
+                        transition={{delay: 1, duration: 0.5}}
+                    >
+                        <h2 className="font-header text-lime-500 text-xl lg:text-3xl mb-2">Your Personal Chef</h2>
+                        <div className="flex relative">
+                            <h3 className="font-header text-mydarkgreen font-extrabold whitespace-nowrap text-3xl mb-3 lg:text-5xl">What's for dinner?</h3>
+                            <WavingLilChef 
+                                className="-translate-y-10 md:hidden" 
+                                isTriggered={startSteam} 
+                                wholeScale={1} 
+                                delayTime={1}
+                            />
+                        </div>
+                        <p className="font-desc text-mydarkgreen text-[1.2rem] leading-snug lg:text-2xl">Chat with our AI assistant to generate recipes based on your current cravings, available tools, and budget. It’s like having a Michelin-star chef living in your pantry.</p>
+                        <Button className="py-7 px-10 font-desc text-lime-500 border-lime-500 rounded-xl mt-5 active:bg-lime-500 active:text-white text-2xl" variant="outline">
+                            Create a Recipe Now                                      
+                        </Button>
+                    </motion.div>
+                </div>
+                <motion.div 
+                    className="order-1 relative hidden md:block pt-20"
+                    initial={{opacity:0}}
+                    animate={startSteam ? {opacity:1} : {}}
+                    transition={{delay: startSteam ? 1 : 0, duration:0.5}}
+                >
+                    <WavingLilChef 
+                        className="absolute left-1/3 top-1/10" 
+                        isTriggered={startSteam} 
+                        wholeScale={4} 
+                        delayTime={startSteam ? 1 : 0}
+                    />
+                </motion.div>
+                
+            </section>
+            <section className="bg-white md:grid md:grid-cols-2 pb-30">
+                <div className="p-10 md:px-15 lg:px-30">
+                    <motion.div 
+                        className="max-w-xl m-auto"
+                        initial={isMobile ? {opacity:0, scale:0, y:200} : {opacity: 0, scale:0, y:50, x:"50vw"}}
+                        whileInView={{opacity:1, scale:1, y:0, x:0}}
+                        viewport={{
+                            once: true,
+                            amount: 0.6
+                        }}
+                        transition={{ delay: 0.15, duration: 0.4}}
+                    >
+                        <h2 className="font-header text-lime-500 text-xl lg:text-3xl mb-2">Connect</h2>
+                        <h3 className="font-header text-mydarkgreen font-extrabold text-3xl mb-3 lg:text-5xl">Cook, Share, Repeat.</h3>
+                        <p className="font-desc text-mydarkgreen text-[1.2rem] leading-snug lg:text-2xl">Join a forum where recipes aren't just read—they're lived. Swap tips with home cooks who use the same local stores as you.</p>
+                        <Button className="py-7 px-10 font-desc text-lime-500 border-lime-500 rounded-xl mt-5 active:bg-lime-500 active:text-white text-2xl" variant="outline">
+                            Join Us                                      
+                        </Button>
+                    </motion.div>
+                </div>
+                
+                <div className="px-10 m-auto md:pt-30">
+                    <motion.img 
+                        className="w-11/12 max-w-md m-auto"
+                        src={images['../assets/images/pan.png']?.default}
+                        style={{originX: 1, originY: 0}}
+                        initial={{rotate: -45}}
+                        whileInView={{ rotate: 0 }}
+                        viewport={{
+                            once: true,
+                            amount: 0.6
+                        }}
+                        transition={{ duration: 0.2 }}
+                    />
+                </div>
+                
             </section>
         </main>
        
