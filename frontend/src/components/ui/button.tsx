@@ -19,6 +19,15 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
+        
+        homeLight: 
+          "bg-background hover:bg-muted hover:text-lime-500 aria-expanded:bg-muted aria-expanded:text-lime-500 font-desc text-lime-500 border-lime-500 rounded-xl active:bg-lime-500 active:text-white",
+        homeDark: 
+          "hover:bg-mydarkgreen/80 bg-mydarkgreen text-white font-desc rounded-xl active:bg-lime-500",
+        ghostIcon:
+          "bg-white active:bg-sidebar-border aria-expanded:bg-sidebar-border rounded-lg",
+        navLink:
+          "font-desc text-mydarkgreen underline-offset-4 hover:underline active:underline"
       },
       size: {
         default:
@@ -30,6 +39,8 @@ const buttonVariants = cva(
         "icon-xs": "size-6 [&_svg:not([class*='size-'])]:size-3",
         "icon-sm": "size-8",
         "icon-lg": "size-10",
+        homeSize: "py-3 px-10 text-2xl mt-5",
+        blankSize: "",
       },
     },
     defaultVariants: {

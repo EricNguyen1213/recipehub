@@ -11,17 +11,19 @@ import { Button } from "@/components/ui/button";
 const images = import.meta.glob<{ default: string }>('../assets/images/*.{png,jpg,jpeg,svg}', { eager: true });
 
 const useIsMobile = () => {
-  const [isMobile, setIsMobile] = useState(false);
+    // Check immediately if window exists (to avoid SSR errors)
+    const [isMobile, setIsMobile] = useState(() => 
+        typeof window !== "undefined" ? window.matchMedia("(max-width: 768px)").matches : false
+    );
 
-  useEffect(() => {
-    const media = window.matchMedia("(max-width: 768px)");
-    const listener = () => setIsMobile(media.matches);
-    listener();
-    media.addEventListener("change", listener);
-    return () => media.removeEventListener("change", listener);
-  }, []);
+    useEffect(() => {
+        const media = window.matchMedia("(max-width: 768px)");
+        const listener = () => setIsMobile(media.matches);
+        media.addEventListener("change", listener);
+        return () => media.removeEventListener("change", listener);
+    }, []);
 
-  return isMobile;
+    return isMobile;
 };
 
 
@@ -327,9 +329,11 @@ export default function Home() {
     const steamTrigger = useRef(null);
     const startSteam = useInView(steamTrigger, {once: true, amount: "all"});
 
+    console.log(isMobile);
+
     return (
         <main>
-            <section className="relative w-full">
+            <section className="relative w-full overflow-hidden">
                 <div className="absolute inset-0 bg-[url('/src/assets/images/home1.jpg')] bg-cover grayscale"></div>
                 <div className="relative z-10 lg:grid lg:grid-cols-[2fr_3fr]">
                     <div className="bg-white text-mydarkgreen flex py-18 justify-center">
@@ -342,10 +346,12 @@ export default function Home() {
                             </ul>
                             <div className="flex justify-center mt-2">
                                 <Button 
-                                    className="bg-mydarkgreen text-white py-7 px-10 font-desc  border-lime-500 rounded-xl mt-5 active:bg-lime-500 text-2xl"
+                                    className="flex gap-4"
+                                    variant="homeDark"
+                                    size="homeSize"
                                 >
                                     <span className="text-white">Start Your Smart List</span>
-                                    <FiEdit3 />
+                                    <FiEdit3 className="scale-150!" />
                                 </Button>
                             </div>
                         </div>
@@ -353,7 +359,7 @@ export default function Home() {
                     <div className="bg-mydarkgreentransparent py-10">
                         <motion.div 
                             className="m-auto bg-white w-14/15 rounded-lg max-w-xl shadow-xl/50"
-                            initial={{ opacity: 0, x: -100 }}
+                            initial={{ opacity: 0, x: 100 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ 
                                 once: true,
@@ -369,7 +375,7 @@ export default function Home() {
                                     className="absolute top-5 -right-27.5" 
                                     isTriggered={startChef} 
                                     wholeScale={0.25} 
-                                    delayTime={4}
+                                    delayTime={3}
                                 />
                                 <div className="text-center flex flex-col justify-evenly">
                                     <AnimatePresence mode="wait">
@@ -414,7 +420,7 @@ ${isIngExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                                             </div>
                                             <AnimatePresence mode="wait">
                                                 <motion.button 
-                                                    onViewportEnter={() => {setTimeout(() => {changeRecipe(updatedRecipe)}, 5000)}}
+                                                    onViewportEnter={() => {setTimeout(() => {changeRecipe(updatedRecipe)}, 3000)}}
                                                     viewport={{once: true, amount: "all"}}
                                                     ref={chefTrigger1}
                                                     onClick={() => setIsIngExpanded(!isIngExpanded)}
@@ -492,7 +498,7 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                                 <h2 className="font-header text-lime-500 text-xl lg:text-3xl lg:mb-2">Explore</h2>
                                 <h3 className="font-header text-mydarkgreen font-extrabold text-3xl lg:text-5xl mb-3">Fresh From the Community</h3>
                                 <p className="font-desc text-mydarkgreen text-[1.2rem] lg:text-2xl leading-snug">Browse thousands of recipes tailored by real cooks and our AI Sous Chef. From 15-minute pantry meals to gourmet weekend feasts.</p>
-                                <Button className="py-7 px-10 font-desc text-lime-500 border-lime-500 rounded-xl mt-5 active:bg-lime-500 active:text-white text-2xl" variant="outline">
+                                <Button variant="homeLight" size="homeSize">
                                     See More Recipes                                      
                                 </Button>
                             </div>
@@ -519,6 +525,37 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                                 ))}
                             </CarouselContent>
                         </Carousel>
+                    </motion.div>
+                </div>
+            </section>
+            <section className="bg-white md:grid md:grid-cols-2 pt-10 overflow-hidden">
+                <div className="py-10">
+                    <motion.img 
+                        className="w-5/6 h-full object-cover m-auto rounded-4xl shadow-lg"
+                        src="https://foodboxhq.com/wp-content/uploads/2023/02/friends-cooking-together-1-768x480.webp"
+                        initial={{ opacity: 0, x: 100, y: 100 }}
+                        whileInView={{ opacity: 1, x: 0, y: 0 }}
+                        viewport={{ 
+                            once: true,
+                            amount: 0.25
+                        }}
+                        transition={{ duration: 0.4 }}
+                    />
+                </div>
+                <div className="p-10 md:px-15 lg:px-30">
+                    <motion.div 
+                        className="max-w-xl m-auto"
+                        initial={{ opacity: 0, x: 100, y: 100 }}
+                        whileInView={{ opacity: 1, x: 0, y: 0 }}
+                        viewport={{ 
+                            once: true,
+                            amount: 0.25
+                        }}
+                        transition={{ duration: 0.4 }}
+                    >
+                        <h2 className="font-header text-lime-500 text-xl lg:text-3xl mb-2">About</h2>
+                        <h3 className="font-header text-mydarkgreen font-extrabold text-3xl mb-3 lg:text-5xl">Behind the Smart Kitchen.</h3>
+                        <p className="font-desc text-mydarkgreen text-[1.2rem] leading-snug lg:text-2xl">We believe cooking shouldn't be a chore or a math problem. We started this to bridge the gap between "What's for dinner?" and the actual groceries in your pantry. By combining real-time local store data with AI-driven recipe modification, we help you spend less time at the checkout and more time at the table.</p>
                     </motion.div>
                 </div>
             </section>
@@ -575,7 +612,7 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                     ))}
                 </div>
             </section>
-            <section className="bg-white md:grid md:grid-cols-2 ">
+            <section className="bg-white md:grid md:grid-cols-2 overflow-hidden">
                 <div className="order-2 relative w-full px-10 md:px-15 lg:px-30 pt-30 pb-50">
                     <CookingLilChef 
                         className="absolute z-10 left-1/2 -translate-x-3/4 pointer-events-none" 
@@ -600,7 +637,7 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                             />
                         </div>
                         <p className="font-desc text-mydarkgreen text-[1.2rem] leading-snug lg:text-2xl">Chat with our AI assistant to generate recipes based on your current cravings, available tools, and budget. It’s like having a Michelin-star chef living in your pantry.</p>
-                        <Button className="py-7 px-10 font-desc text-lime-500 border-lime-500 rounded-xl mt-5 active:bg-lime-500 active:text-white text-2xl" variant="outline">
+                        <Button variant="homeLight" size="homeSize">
                             Create a Recipe Now                                      
                         </Button>
                     </motion.div>
@@ -620,11 +657,11 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                 </motion.div>
                 
             </section>
-            <section className="bg-white md:grid md:grid-cols-2 pb-30">
+            <section className="bg-white md:grid md:grid-cols-2 pb-30 overflow-hidden">
                 <div className="p-10 md:px-15 lg:px-30">
                     <motion.div 
                         className="max-w-xl m-auto"
-                        initial={isMobile ? {opacity:0, scale:0, y:200} : {opacity: 0, scale:0, y:50, x:"50vw"}}
+                        initial={{opacity:0, scale:0, y: isMobile ? 200 : 50, x: isMobile ? 0 : "50vw"}}
                         whileInView={{opacity:1, scale:1, y:0, x:0}}
                         viewport={{
                             once: true,
@@ -635,7 +672,7 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                         <h2 className="font-header text-lime-500 text-xl lg:text-3xl mb-2">Connect</h2>
                         <h3 className="font-header text-mydarkgreen font-extrabold text-3xl mb-3 lg:text-5xl">Cook, Share, Repeat.</h3>
                         <p className="font-desc text-mydarkgreen text-[1.2rem] leading-snug lg:text-2xl">Join a forum where recipes aren't just read—they're lived. Swap tips with home cooks who use the same local stores as you.</p>
-                        <Button className="py-7 px-10 font-desc text-lime-500 border-lime-500 rounded-xl mt-5 active:bg-lime-500 active:text-white text-2xl" variant="outline">
+                        <Button variant="homeLight" size="homeSize">
                             Join Us                                      
                         </Button>
                     </motion.div>
