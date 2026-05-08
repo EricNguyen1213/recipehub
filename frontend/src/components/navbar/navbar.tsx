@@ -1,12 +1,14 @@
-import logo from "../../assets/images/logo.png";
-import logoText from "../../assets/images/logoText.png";
-import { BiSolidFoodMenu } from "react-icons/bi";
 import { Button } from "@/components/ui/button";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { BiSolidFoodMenu } from "react-icons/bi";
 import { FaBookOpen } from "react-icons/fa6";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
-import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { HashLink as Link } from 'react-router-hash-link';
+import logo from "../../assets/images/logo.png";
+import logoText from "../../assets/images/logoText.png";
+import { useLocation } from "react-router-dom";
 
 
 function useOutsideClick(ref: React.RefObject<HTMLElement>, callback: () => void) {
@@ -25,41 +27,68 @@ function useOutsideClick(ref: React.RefObject<HTMLElement>, callback: () => void
   }, [ref, callback]);
 }
 
+interface NavBarProps {
+  isSideMenuOpen: boolean;
+  setIsSideMenuOpen: (newState: boolean) => void;
+}
 
-
-// interface NavBarProps {
-//   variant?: "exploreOpen" | "exploreClosed" | "default";
-// }
-
-export default function NavBar() {
-  
-  
+export default function NavBar({ isSideMenuOpen, setIsSideMenuOpen } : NavBarProps) {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const withinNav = useRef<HTMLElement>(null!);
   useOutsideClick(withinNav, () => setIsNavOpen(false));
 
-  const [isExplorePage, setIsExplorePage] = useState(false);
-  const [isSideSearchOpen, setIsSideSearchOpen] = useState(false);
+  const isExplorePage = useLocation().pathname === '/explore';
+
+  useEffect(() => {
+    if (isSideMenuOpen) {
+      const timer = setTimeout(() => {
+        const nav = document.querySelector('nav');
+        if (nav) {
+          nav.removeAttribute('aria-hidden');
+          nav.removeAttribute('data-aria-hidden');
+        }
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isSideMenuOpen]);
 
   return (
-    <nav ref={withinNav} className="bg-white w-full shadow-lg sticky top-0 z-50">
-      
+    <nav ref={withinNav} className="bg-white w-full shadow-lg sticky top-0 z-50 pointer-events-auto">
       <section className="w-full h-13 flex">
         {isExplorePage ? 
           <div className="w-17 flex justify-end my-auto">
-              {isSideSearchOpen ? 
-                <FaBookOpen size="2.25em" className="text-mydarkgreen" />
-                : <BiSolidFoodMenu size="2.25em" className="text-mydarkgreen" />}
+              {isSideMenuOpen ? 
+                <Button 
+                  className="" 
+                  variant="ghostIcon" 
+                  size="icon-lg"
+                  onClick={(e) => {
+                    (e.currentTarget as HTMLButtonElement).blur();
+                    setIsSideMenuOpen(false);
+                  }}
+                > 
+                  <FaBookOpen className="text-mydarkgreen size-[2.25em]" />
+                </Button>
+                : <Button 
+                  className="" 
+                  variant="ghostIcon" 
+                  size="icon-lg"
+                  onClick={(e) => {
+                    (e.currentTarget as HTMLButtonElement).blur();
+                    setIsSideMenuOpen(true);
+                  }}
+                > 
+                  <BiSolidFoodMenu className="text-mydarkgreen size-[2.25em]" />
+                </Button>}
           </div>
           : <div className="md:w-17"></div>}
         
         
         <div className="px-3 flex justify-between mx-auto w-7/8 md:w-4/5">
-          <div className="flex gap-1 h-full">
+          <Link smooth className="flex gap-1 h-full" to="/" reloadDocument>
             <img className="w-9 my-auto" src={logo} alt="Logo" />
-
             <img className="w-30 my-auto" src={logoText} alt="Shop4Food" />
-          </div>
+          </Link>
 
           <div className="my-auto sm:hidden">
               <Button 
@@ -75,7 +104,9 @@ export default function NavBar() {
 
           <div className="my-auto hidden sm:flex gap-3">
             <div>
-              <Button className="text-base" variant="navLink">Explore</Button>
+              <Link to="/explore" reloadDocument>
+                <Button className="text-base" variant="navLink">Explore</Button>
+              </Link>
             
               <Button className="text-base" variant="navLink">Feed</Button>
             
@@ -88,19 +119,18 @@ export default function NavBar() {
           </div>
         </div>
       </section>
-
       <AnimatePresence>
         {isNavOpen && (
           <motion.section
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
             className="flex flex-col gap-2 overflow-hidden pb-2 px-10 sm:hidden"
           >
-            <div>
+            <Link to="/explore" reloadDocument>
               <Button className="text-base" variant="navLink">Explore</Button>
-            </div>
+            </Link>
             <div>
               <Button className="text-base" variant="navLink">Feed</Button>
             </div>

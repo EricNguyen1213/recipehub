@@ -21,13 +21,15 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         
         homeLight: 
-          "bg-background hover:bg-muted hover:text-lime-500 aria-expanded:bg-muted aria-expanded:text-lime-500 font-desc text-lime-500 border-lime-500 rounded-xl active:bg-lime-500 active:text-white",
+          "bg-background hover:bg-muted hover:text-mylightgreen aria-expanded:bg-muted aria-expanded:text-mylightgreen font-desc text-mylightgreen border-mylightgreen rounded-xl active:bg-mylightgreen active:text-white",
         homeDark: 
-          "hover:bg-mydarkgreen/80 bg-mydarkgreen text-white font-desc rounded-xl active:bg-lime-500",
+          "hover:bg-mydarkgreen/80 bg-mydarkgreen text-white font-desc rounded-xl active:bg-mylightgreen",
         ghostIcon:
           "bg-white active:bg-sidebar-border aria-expanded:bg-sidebar-border rounded-lg",
         navLink:
-          "font-desc text-mydarkgreen underline-offset-4 hover:underline active:underline"
+          "font-desc text-mydarkgreen underline-offset-4 hover:underline active:underline",
+        footLink:
+          "font-desc text-white underline-offset-4 hover:underline active:underline"
       },
       size: {
         default:
@@ -40,7 +42,7 @@ const buttonVariants = cva(
         "icon-sm": "size-8",
         "icon-lg": "size-10",
         homeSize: "py-3 px-10 text-2xl mt-5",
-        blankSize: "",
+        footSize: "text-lg",
       },
     },
     defaultVariants: {

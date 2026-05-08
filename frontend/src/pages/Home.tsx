@@ -1,11 +1,11 @@
-import { useEffect, useState, useRef } from "react";
-import Autoplay from "embla-carousel-autoplay"
-import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "./ui/carousel";
-import { ChevronDown } from "lucide-react";
-import { AnimatePresence, motion, useInView } from "framer-motion";
-import { LilChef, CookingLilChef, WavingLilChef } from "@/assets/components/lilChef";
-import { FiEdit3 } from "react-icons/fi";
+import { CookingLilChef, LilChef, WavingLilChef } from "@/assets/components/lilChef";
 import { Button } from "@/components/ui/button";
+import Autoplay from "embla-carousel-autoplay";
+import { AnimatePresence, motion, useInView } from "framer-motion";
+import { ChevronDown } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { FiEdit3 } from "react-icons/fi";
+import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "../components/ui/carousel";
 
 
 const images = import.meta.glob<{ default: string }>('../assets/images/*.{png,jpg,jpeg,svg}', { eager: true });
@@ -329,10 +329,10 @@ export default function Home() {
     const steamTrigger = useRef(null);
     const startSteam = useInView(steamTrigger, {once: true, amount: "all"});
 
-    console.log(isMobile);
+    const [panFlipAniDone, setPanFlipAniDone] = useState(false);
 
     return (
-        <main>
+        <main className="h-full">
             <section className="relative w-full overflow-hidden">
                 <div className="absolute inset-0 bg-[url('/src/assets/images/home1.jpg')] bg-cover grayscale"></div>
                 <div className="relative z-10 lg:grid lg:grid-cols-[2fr_3fr]">
@@ -482,7 +482,7 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                     </div>
                 </div>
             </section>
-            <section className="w-full bg-[url('/src/assets/images/foodCollage.jpg')] bg-cover">
+            <section id="explore" className="w-full bg-[url('/src/assets/images/foodCollage.jpg')] bg-cover">
                 <div className="bg-[rgba(255,255,255,0.85)] overflow-x-hidden py-18 md:py-25 bg-linear-to-b from-white via-transparent to-white">
                     <motion.div
                         initial={{ opacity: 0, x: 100 }}
@@ -495,7 +495,7 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                     >
                         <div className="w-full p-10 pb-20">
                             <div className="max-w-xl m-auto lg:max-w-3xl">
-                                <h2 className="font-header text-lime-500 text-xl lg:text-3xl lg:mb-2">Explore</h2>
+                                <h2 className="font-header text-mylightgreen text-xl lg:text-3xl lg:mb-2">Explore</h2>
                                 <h3 className="font-header text-mydarkgreen font-extrabold text-3xl lg:text-5xl mb-3">Fresh From the Community</h3>
                                 <p className="font-desc text-mydarkgreen text-[1.2rem] lg:text-2xl leading-snug">Browse thousands of recipes tailored by real cooks and our AI Sous Chef. From 15-minute pantry meals to gourmet weekend feasts.</p>
                                 <Button variant="homeLight" size="homeSize">
@@ -510,14 +510,14 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                             <CarouselContent className="w-full m-auto pb-12">
                                 {seeMoreFoods.map((item, index) => (
                                     <CarouselItem key={index} className="w-full p-0 md:basis-1/2 lg:basis-1/3 2xl:basis-1/5">
-                                        <div className="bg-white w-2xs flex m-auto rounded-xl border-2 border-lime-500 shadow-xl">
+                                        <div className="bg-white w-2xs flex m-auto rounded-xl border-2 border-mylightgreen shadow-xl">
                                             <img className="w-3/5 h-50 object-cover rounded-l-xl" src={item.img} alt={item.title}></img>
                                             <div className="w-2/5">
                                                 <div className="px-1 w-full h-5/7 flex justify-center items-center">
                                                     <p className="text-center font-header text-xl text-mydarkgreen">{item.title}</p>
                                                 </div>
                                                 <div className="w-full h-2/7 flex justify-center items-start">
-                                                    <Button className="bg-lime-500 rounded-xl" variant="default">See More</Button>
+                                                    <Button className="bg-mylightgreen rounded-xl" variant="default">See More</Button>
                                                 </div>
                                             </div>
                                         </div>
@@ -528,7 +528,7 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                     </motion.div>
                 </div>
             </section>
-            <section className="bg-white md:grid md:grid-cols-2 pt-10 overflow-hidden">
+            <section id="about" className="bg-white md:grid md:grid-cols-2 pt-10 overflow-hidden">
                 <div className="py-10">
                     <motion.img 
                         className="w-5/6 h-full object-cover m-auto rounded-4xl shadow-lg"
@@ -553,13 +553,13 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                         }}
                         transition={{ duration: 0.4 }}
                     >
-                        <h2 className="font-header text-lime-500 text-xl lg:text-3xl mb-2">About</h2>
+                        <h2 className="font-header text-mylightgreen text-xl lg:text-3xl mb-2">About</h2>
                         <h3 className="font-header text-mydarkgreen font-extrabold text-3xl mb-3 lg:text-5xl">Behind the Smart Kitchen.</h3>
                         <p className="font-desc text-mydarkgreen text-[1.2rem] leading-snug lg:text-2xl">We believe cooking shouldn't be a chore or a math problem. We started this to bridge the gap between "What's for dinner?" and the actual groceries in your pantry. By combining real-time local store data with AI-driven recipe modification, we help you spend less time at the checkout and more time at the table.</p>
                     </motion.div>
                 </div>
             </section>
-            <section className="relative w-full bg-white overflow-hidden pb-30">
+            <section id="shop" className="relative w-full bg-white overflow-hidden pb-30">
                 <div className="md:grid md:grid-cols-[1fr_1fr]">
                     <div className="relative z-10 pt-[min(70vw,350px)] px-10 md:px-15 lg:px-30 md:pt-[min(35vw,350px)]">
                         <div className="relative flex flex-col justify-center items-center">
@@ -586,7 +586,7 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                                 transition={{ duration: 0.8 }}
                                 onAnimationComplete={() => setCartAniDone(true)}
                             >
-                                <h2 className="font-header text-lime-500 text-xl lg:text-3xl">Shop Smart</h2>
+                                <h2 className="font-header text-mylightgreen text-xl lg:text-3xl">Shop Smart</h2>
                                 <h3 className="font-header text-mydarkgreen font-extrabold text-3xl mb-3 lg:text-5xl">Know the cost before you go!</h3>
                                 <p className="font-desc text-mydarkgreen text-[1.2rem] leading-snug lg:text-2xl">We scan local aisles via API to find your ingredients. If they’re out of stock, we don’t just tell you—we suggest a swap and update the recipe instructions instantly.</p>
                             </motion.div>
@@ -612,7 +612,7 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                     ))}
                 </div>
             </section>
-            <section className="bg-white md:grid md:grid-cols-2 overflow-hidden">
+            <section id="chef" className="bg-white md:grid md:grid-cols-2 overflow-hidden">
                 <div className="order-2 relative w-full px-10 md:px-15 lg:px-30 pt-30 pb-50">
                     <CookingLilChef 
                         className="absolute z-10 left-1/2 -translate-x-3/4 pointer-events-none" 
@@ -626,7 +626,7 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                         animate={startSteam ? {opacity: 1, y: 0} : {}}
                         transition={{delay: 1, duration: 0.5}}
                     >
-                        <h2 className="font-header text-lime-500 text-xl lg:text-3xl mb-2">Your Personal Chef</h2>
+                        <h2 className="font-header text-mylightgreen text-xl lg:text-3xl mb-2">Your Personal Chef</h2>
                         <div className="flex relative">
                             <h3 className="font-header text-mydarkgreen font-extrabold whitespace-nowrap text-3xl mb-3 lg:text-5xl">What's for dinner?</h3>
                             <WavingLilChef 
@@ -657,19 +657,37 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                 </motion.div>
                 
             </section>
-            <section className="bg-white md:grid md:grid-cols-2 pb-30 overflow-hidden">
+            <section id="join" className="bg-white md:grid md:grid-cols-2 pb-30 overflow-hidden">
                 <div className="p-10 md:px-15 lg:px-30">
                     <motion.div 
-                        className="max-w-xl m-auto"
-                        initial={{opacity:0, scale:0, y: isMobile ? 200 : 50, x: isMobile ? 0 : "50vw"}}
-                        whileInView={{opacity:1, scale:1, y:0, x:0}}
+                        className="max-w-xl m-auto md:hidden"
+                        initial={{opacity:0, scale:0, y: 200, x: 0}}
+                        whileInView={panFlipAniDone ? {opacity:1, scale:1, y:0, x:0} : {}}
                         viewport={{
                             once: true,
                             amount: 0.6
                         }}
                         transition={{ delay: 0.15, duration: 0.4}}
                     >
-                        <h2 className="font-header text-lime-500 text-xl lg:text-3xl mb-2">Connect</h2>
+                        <h2 className="font-header text-mylightgreen text-xl lg:text-3xl mb-2">Connect</h2>
+                        <h3 className="font-header text-mydarkgreen font-extrabold text-3xl mb-3 lg:text-5xl">Cook, Share, Repeat.</h3>
+                        <p className="font-desc text-mydarkgreen text-[1.2rem] leading-snug lg:text-2xl">Join a forum where recipes aren't just read—they're lived. Swap tips with home cooks who use the same local stores as you.</p>
+                        <Button variant="homeLight" size="homeSize">
+                            Join Us                                      
+                        </Button>
+                    </motion.div>
+
+                    <motion.div 
+                        className="max-w-xl m-auto hidden md:block"
+                        initial={{opacity:0, scale:0, y: 50, x: "50vw"}}
+                        whileInView={panFlipAniDone ? {opacity:1, scale:1, y:0, x:0} : {}}
+                        viewport={{
+                            once: true,
+                            amount: 0.6
+                        }}
+                        transition={{ delay: 0.15, duration: 0.4}}
+                    >
+                        <h2 className="font-header text-mylightgreen text-xl lg:text-3xl mb-2">Connect</h2>
                         <h3 className="font-header text-mydarkgreen font-extrabold text-3xl mb-3 lg:text-5xl">Cook, Share, Repeat.</h3>
                         <p className="font-desc text-mydarkgreen text-[1.2rem] leading-snug lg:text-2xl">Join a forum where recipes aren't just read—they're lived. Swap tips with home cooks who use the same local stores as you.</p>
                         <Button variant="homeLight" size="homeSize">
@@ -687,14 +705,14 @@ ${isRecExpanded ? "h-auto" : "h-40 mask-[linear-gradient(to_bottom,black_50%,tra
                         whileInView={{ rotate: 0 }}
                         viewport={{
                             once: true,
-                            amount: 0.6
+                            amount: 0.3
                         }}
                         transition={{ duration: 0.2 }}
+                        onAnimationComplete={() => setPanFlipAniDone(true)}
                     />
                 </div>
                 
             </section>
         </main>
-       
     );
 }

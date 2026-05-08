@@ -1,8 +1,10 @@
+
+
 const NotFoundPage = () => {
     return (
-        <div>
+        <main className="h-full">
             <p>Page not found</p>
-        </div>
+        </main>
     );
 }
 
