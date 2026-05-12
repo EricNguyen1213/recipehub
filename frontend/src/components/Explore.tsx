@@ -429,43 +429,43 @@ const testRecipes = [
 ]
 
 interface ExploreProps {
-  isSmSize: boolean;
+  overSmSize: boolean;
+  overMdSize: boolean;
   isSideMenuOpen: boolean;
   setIsSideMenuOpen: (newState: boolean) => void;
 }
 
-export default function Explore({ isSmSize, isSideMenuOpen, setIsSideMenuOpen } : ExploreProps) { 
+export default function Explore({ overSmSize, overMdSize, isSideMenuOpen, setIsSideMenuOpen } : ExploreProps) { 
 
     const [isRecipeDialogOpen, setIsRecipeDialogOpen] = useState(false);
 
     useEffect(() => {
-        if (isRecipeDialogOpen && isSideMenuOpen && !isSmSize) {
+        if (isRecipeDialogOpen && isSideMenuOpen && !overSmSize) {
             setIsSideMenuOpen(false);
         }
-    }, [isSmSize]);
+    }, [overSmSize, isRecipeDialogOpen, isSideMenuOpen, setIsSideMenuOpen]);
     
     return (
         <>
             <RecipeDialog 
+                overMdSize={overMdSize}
                 isOpen={isRecipeDialogOpen}
-                handleOpenChange={setIsRecipeDialogOpen}
+                setIsOpen={setIsRecipeDialogOpen}
                 recipe={testRecipes[0]}
             />
             <Drawer 
-                key={isSmSize ? "desktop" : "mobile"}
-                // modal={!isSmSize}
+                key={overSmSize ? "desktop" : "mobile"}
                 direction="left" 
                 open={isSideMenuOpen} 
                 onOpenChange={setIsSideMenuOpen}
-                
             >
                 <DrawerContent
-                    modal={!isSmSize} 
+                    modal={!overSmSize} 
                     className="w-full sm:w-43/100 max-w-md top-12 h-[calc(100vh-43px)]"
                     autoFocus={true}
                     aria-hidden={false}
                 >
-                    <DrawerHeader className="">
+                    <DrawerHeader>
                         <DrawerTitle>Move Goal</DrawerTitle>
                         <DrawerDescription>Set your daily activity goal.</DrawerDescription>
                     </DrawerHeader>
@@ -493,13 +493,13 @@ export default function Explore({ isSmSize, isSideMenuOpen, setIsSideMenuOpen } 
                     </DrawerFooter>
                 </DrawerContent>
             </Drawer>
-            <main className={cn("bg-white w-screen flex", isSmSize && isSideMenuOpen && "pointer-events-auto")}>
-                <div className={isSmSize && isSideMenuOpen ? "w-43/100 max-w-md shrink-0" : ""}></div>
-                <div className={isSmSize && isSideMenuOpen ? "flex-1" : "w-full"}>
-                    <section className={cn("relative w-full h-[40vh] bg-[url('/src/assets/images/exploreHeader.png')] bg-cover", isSmSize && isSideMenuOpen ? "bg-position-[10%_center]" : "bg-position-[center_50%]")}>
+            <main className={cn("bg-white w-screen flex", overSmSize && isSideMenuOpen && "pointer-events-auto")}>
+                <div className={overSmSize && isSideMenuOpen ? "w-43/100 max-w-md shrink-0" : ""}></div>
+                <div className={overSmSize && isSideMenuOpen ? "flex-1" : "w-full"}>
+                    <section className={cn("relative w-full h-[40vh] bg-[url('/src/assets/images/exploreHeader.png')] bg-cover", overSmSize && isSideMenuOpen ? "bg-position-[10%_center]" : "bg-position-[center_50%]")}>
                         <div className="absolute inset-0 bg-white/50"></div>
                         <motion.div 
-                            className={cn("relative flex flex-col justify-center items-center h-full", isSmSize && isSideMenuOpen ? "w-full max-w-xl" : "w-3/5")}
+                            className={cn("relative flex flex-col justify-center items-center h-full", overSmSize && isSideMenuOpen ? "w-full max-w-xl" : "w-3/5")}
                             initial={{ opacity: 0, y: -50 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3 }}

@@ -32,7 +32,8 @@ function useMediaQuery(query: string) {
 export default function App() {
 
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
-  const isSmSize = useMediaQuery("(min-width: 640px)");
+  const overSmSize = useMediaQuery("(min-width: 640px)");
+  const overMdSize = useMediaQuery("(min-width: 768px)")
 
   return (
     <BrowserRouter>
@@ -48,7 +49,8 @@ export default function App() {
             path='/explore' 
             element={
               <Explore 
-                isSmSize={isSmSize}
+                overSmSize={overSmSize}
+                overMdSize={overMdSize}
                 isSideMenuOpen={isSideMenuOpen}
                 setIsSideMenuOpen={setIsSideMenuOpen}
               />

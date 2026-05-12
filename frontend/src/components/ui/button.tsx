@@ -29,7 +29,9 @@ const buttonVariants = cva(
         navLink:
           "font-desc text-mydarkgreen underline-offset-4 hover:underline active:underline",
         footLink:
-          "font-desc text-white underline-offset-4 hover:underline active:underline"
+          "font-desc text-white underline-offset-4 hover:underline active:underline",
+        recipeDialogOutline:
+          "capitalize active:not-aria-[haspopup]:-translate-y-px rounded-none rounded-t-lg border-border border-b-0 bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:bg-transparent dark:hover:bg-input/30",
       },
       size: {
         default:

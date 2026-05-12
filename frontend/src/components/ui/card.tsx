@@ -157,7 +157,10 @@ function RecipeCardImage({ recipe, ...props } : React.ComponentProps<"div"> & Re
   }).format(new Date(recipe.datePublished));
 
   return (
-    <Card className="relative w-full max-w-md p-0 gap-0 m-auto transition-all active:translate-y-px active:shadow-inner" {...props}>
+    <Card 
+      className={cn("relative w-full max-w-md p-0 gap-0 m-auto transition-all active:translate-y-px active:shadow-inner")}
+      {...props}
+    >
       <CardAction className="absolute right-4 top-4 z-21">
         <Badge variant="secondary" className="text-sm p-3">Original</Badge>
       </CardAction>
