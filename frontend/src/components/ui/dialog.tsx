@@ -163,6 +163,36 @@ function DialogDescription({
 }
 
 
+const formatIndAmount = (input: string) => {
+  const fracMatch = input.match(/^\d+\/\d+$/);
+  if (fracMatch) {
+      return (<span className="diagonal-fractions">{input}</span>);
+  }
+  
+  const decMatch = input.match(/^\d+(\.\d+)?$/);
+  if (decMatch) {
+      return input;
+  }
+  
+  return "";
+};
+
+
+const formatAmount = (input: string) => {
+  if (input.includes('-')) {
+      const [left, right] = input.split('-');
+      return (
+        <div className="shrink-0 text-xl min-w-17 text-center ">
+          {formatIndAmount(left)} - {formatIndAmount(right)}
+        </div>
+      );
+  }
+
+  const formattedAmount = formatIndAmount(input);
+  return (<div className="shrink-0 text-xl min-w-17 text-center">{formattedAmount}</div>);
+};
+
+
 interface IngredientOption {
   quantity: string;
   metric: string;
@@ -222,37 +252,38 @@ export function RecipeDialog({ overMdSize, isOpen, setIsOpen, recipe } : RecipeD
   
   React.useEffect(() => {
     if (!api) return
-    let index;
-    if (overMdSize && mode === RECIPE_DIALOG_ALL_MODES[1]) {
-      index = 0;
-    } else {
-      index = overMdSize ? RECIPE_DIALOG_PART_MODES.indexOf(mode) : RECIPE_DIALOG_ALL_MODES.indexOf(mode)
-    }
-    api.scrollTo(index)
-  }, [overMdSize, mode, api])
 
-  React.useEffect(() => {
-    if (!api) return
+    api.scrollTo(0)
+
     api.on("select", () => {
       const index = api.selectedScrollSnap()
       setMode(overMdSize ? RECIPE_DIALOG_PART_MODES[index] : RECIPE_DIALOG_ALL_MODES[index])
     })
-  }, [overMdSize, api])
+  }, [overMdSize, api]);
 
+  React.useEffect(() => {
+    if (!api) return
+      const index = overMdSize ? RECIPE_DIALOG_PART_MODES.indexOf(mode) : RECIPE_DIALOG_ALL_MODES.indexOf(mode);
+      api.scrollTo(index);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, api]);
+
+  
   return (
     <Dialog 
       open={isOpen} 
       onOpenChange={(nextState: boolean) => {
         setIsOpen(nextState);
         setMode('ABOUT');
-      }}>
+      }}
+    >
       <DialogContent 
         showCloseButton={false} 
         autoFocus={true} 
         onOpenAutoFocus={(e) => e.preventDefault()}
-        className="overflow-clip w-9/10 gap-0 text-mydarkgreen grid md:grid-cols-5 max-w-275"
+        className=" overflow-clip w-9/10 gap-0 text-mydarkgreen grid md:grid-cols-4 lg:grid-cols-5 max-w-275 md:items-start"
       >
-        <div className="md:col-span-3">
+        <div className="md:col-span-2 lg:col-span-3">
           <img
             src={recipe.image}
             alt="Event cover"
@@ -263,7 +294,7 @@ export function RecipeDialog({ overMdSize, isOpen, setIsOpen, recipe } : RecipeD
               <div className="flex justify-between">
                 <div className="flex flex-col gap-1.5 w-full">
                   <DialogDescription className="font-robo text-sm">{formattedDate}</DialogDescription>
-                  <DialogTitle className="text-wrap wrap-break-word font-robo text-mydarkgreen text-xl leading-snug ">{recipe.title}</DialogTitle>
+                  <DialogTitle className="text-wrap wrap-break-word font-robo text-mydarkgreen leading-snug text-xl sm:text-2xl">{recipe.title}</DialogTitle>
                 </div>
                 <div className="flex gap-2 items-center">
                   <Button 
@@ -351,52 +382,96 @@ export function RecipeDialog({ overMdSize, isOpen, setIsOpen, recipe } : RecipeD
             </div>
           </div>
         </div>
-        <div className={`bg-white md:col-span-2 border-border border-l border-b ${mode === RECIPE_DIALOG_PART_MODES[2] ? "md:row-span-1" : "md:row-span-2"}`}>
-
-        </div>
+        {overMdSize && 
+          <div className={`relative h-full bg-white md:col-span-2 border-border border-l border-b text-mydarkgreen ${mode === RECIPE_DIALOG_PART_MODES[2] ? "md:row-span-1" : "md:row-span-2"}`}>
+              <div className="absolute inset-0 h-15 bg-white flex items-center">
+                <h2 className="mx-auto w-6/7 text-xl font-robo font-medium">Ingredients</h2>
+              </div>
+              <div className="absolute left-0 top-15 h-[calc(100%-3.75rem)] overflow-y-auto w-full">
+                <div className="mx-auto w-12/13 pb-15 font-robo">
+                  <ul className="space-y-4 leading-normal text-base sm:text-lg md:text-base lg:text-lg mask-[linear-gradient(to_right,rgba(0,0,0,1)_90%,rgba(0,0,0,0)_100%)]">
+                    {recipe.ingredients.map((ingredientGroup, i) => (
+                      <li key={i} className="w-full">
+                        <div className="flex gap-2 overflow-x-scroll no-scrollbar">
+                          {ingredientGroup.map((ingredient, i) => (
+                            <React.Fragment key={i}>
+                              <div className="shrink-0 w-[calc(100%-var(--spacing)*8)] flex gap-2">
+                                {formatAmount(ingredient.quantity)}
+                                {ingredient.metric && 
+                                  <div className="shrink-0 pt-0.5">
+                                    {ingredient.metric}
+                                  </div>
+                                }
+                                <div className="flex-1 min-w-0 pt-0.5">
+                                  {ingredient.item}
+                                </div>
+                              </div>
+                              <div className={`pt-1 ${ingredientGroup.length - 1 === i && "invisible"}`}>OR</div>
+                            </React.Fragment>
+                          ))}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+          </div>
+        }
         <Carousel 
-          className={`bg-white z-1 ${mode === RECIPE_DIALOG_PART_MODES[2] ? "md:col-span-5" : "md:col-span-3"}`}
+          className={`max-w-[90vw] bg-white z-1 ${mode === RECIPE_DIALOG_PART_MODES[2] ? "md:col-span-5" : "md:col-span-2 lg:col-span-3"}`}
           plugins={[AutoHeight(),]}
           setApi={setApi}
         >
           <CarouselContent className="items-start transition-[height] duration-300 ease-in-out">
-            <CarouselItem className="h-auto max-w-[calc(100%-var(--spacing)*4)] pl-0 translate-x-4">
-              <div className="mx-auto w-8/9 py-5 min-h-[20vh]">
-                <p className="leading-normal">{recipe.description}</p>
+
+            <CarouselItem className="h-auto ">
+              <div className="mx-auto w-8/9 pt-6 pb-15 min-h-[20vh] font-robo">
+                <p className="leading-normal text-base sm:text-lg md:text-base lg:text-lg">{recipe.description}</p>
               </div>
             </CarouselItem>
-            {!overMdSize && <CarouselItem className="h-auto max-w-[calc(100%-var(--spacing)*4)] pl-0 translate-x-2">
-              <div className="mx-auto w-8/9 py-5">
-                {Array.from({ length: 2 }).map((_, index) => (
-                  <p key={index} className="leading-normal">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                    enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                    nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-                    reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                    nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                    sunt in culpa qui officia deserunt mollit anim id est laborum.
-                  </p>
-                ))}
-              </div>
+
+            {!overMdSize && <CarouselItem className="h-auto">
+              <div className="mx-auto w-12/13 pt-6 pb-15 font-robo">
+                  <ul className="space-y-4 leading-normal text-base sm:text-lg md:text-base lg:text-lg mask-[linear-gradient(to_right,rgba(0,0,0,1)_90%,rgba(0,0,0,0)_100%)]">
+                    {recipe.ingredients.map((ingredientGroup, i) => (
+                      <li key={i} className="w-full">
+                        <div className="flex gap-2 overflow-x-scroll no-scrollbar">
+                          {ingredientGroup.map((ingredient, i) => (
+                            <React.Fragment key={i}>
+                              <div className={`shrink-0 max-w-[calc(100%-var(--spacing)*12)] flex gap-2 ${ingredientGroup.length - 1 === i && "w-[calc(100%-var(--spacing)*12)]"}`}>
+                                {formatAmount(ingredient.quantity)}
+                                {ingredient.metric && 
+                                  <div className="shrink-0 pt-0.5">
+                                    {ingredient.metric}
+                                  </div>
+                                }
+                                <div className="min-w-0 pt-0.5">
+                                  {ingredient.item}
+                                </div>
+                              </div>
+                              <div className={`pl-4 pt-1 ${ingredientGroup.length - 1 === i && "hidden"}`}>OR</div>
+                            </React.Fragment>
+                            
+                          ))}
+                        </div>
+                      </li>
+                    ))}
+                    
+                  </ul>
+                </div>
             </CarouselItem>}
-            <CarouselItem className="h-auto max-w-[calc(100%-var(--spacing)*4)] pl-0 translate-x-2">
-              <div className="mx-auto w-8/9 py-5">
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <p key={index} className="leading-normal">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                    enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                    nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-                    reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                    nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                    sunt in culpa qui officia deserunt mollit anim id est laborum.
-                  </p>
-                ))}
+            
+            <CarouselItem className="h-auto min-w-0 shrink-0">
+              <div className="mx-auto w-7/8 pt-6 pb-15 font-robo">
+                <ol className="space-y-4 pl-4 marker:font-bold leading-normal list-decimal text-base sm:text-lg md:text-base lg:text-lg">
+                  {recipe.directions.map((item, i) => (
+                    <li key={i} className="pl-4 wrap-break" style={{ wordBreak: "break-word" }}>{item}</li>
+                  ))}
+                </ol>
               </div>
             </CarouselItem>
-            <CarouselItem className="h-auto max-w-[calc(100%-var(--spacing)*4)] pl-0 translate-x-0">
-              <div className="mx-auto w-8/9 py-5">
+            <CarouselItem className="h-auto">
+              <div className="mx-auto w-8/9 py-6 font-robo">
                 {Array.from({ length: 4 }).map((_, index) => (
                   <p key={index} className="leading-normal">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
@@ -411,10 +486,13 @@ export function RecipeDialog({ overMdSize, isOpen, setIsOpen, recipe } : RecipeD
               </div>
             </CarouselItem>
           </CarouselContent>
-        </Carousel>         
+          
+        </Carousel>
         <DialogFooter>
-          <DialogClose className="absolute right-0 top-0" asChild>
-            <Button variant="outline">Close</Button>
+          <DialogClose className="absolute right-2 top-2" asChild>
+            <Button variant="outline" className="px-2">
+              <XIcon className="size-5" />
+            </Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

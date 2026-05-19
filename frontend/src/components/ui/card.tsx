@@ -192,7 +192,7 @@ function RecipeCardImage({ recipe, ...props } : React.ComponentProps<"div"> & Re
           <CardDescription className="pt-1 h-full overflow-hidden mask-[linear-gradient(180deg,white_50%,transparent_100%)]">{recipe.description}</CardDescription>
         </CardHeader>
         <CardFooter className="h-15 justify-between px-5">
-          <div className="flex">
+          {/* <div className="flex">
             {[...Array(5)].map((_, i) => {
               const starVal = Math.round(Math.max(0, Math.min(recipe.aggregateRating - i, 1)) * 100) / 100;
               const starId = `${recipe.recipeId}-star-${i}`;
@@ -222,6 +222,40 @@ function RecipeCardImage({ recipe, ...props } : React.ComponentProps<"div"> & Re
                 );
               }
             })}
+          </div> */}
+          <div className="flex items-end gap-1.5 pl-1">
+            <h3 className="text-amber-400 text-base translate-y-px">{recipe.aggregateRating}</h3>
+            <div className="flex">
+              {[...Array(5)].map((_, i) => {
+                const starVal = Math.round(Math.max(0, Math.min(recipe.aggregateRating - i, 1)) * 100) / 100;
+                const starId = `${recipe.recipeId}-star-${i}`;
+                if (starVal === 1) {
+                  return (
+                    <svg key={i} viewBox="0 0 24 24" fill="gold" className="size-6">
+                      <path stroke="gold" strokeWidth="1" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                  );
+                } else if (starVal === 0) {
+                  return (
+                    <svg key={i} viewBox="0 0 24 24" fill="white" className="size-6">
+                      <path stroke="gold" strokeWidth="1" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                  );
+                } else {
+                  return (
+                    <svg key={i} viewBox="0 0 24 24" className="size-6">
+                      <defs>
+                        <linearGradient id={starId}>
+                          <stop offset={starVal} stopColor="gold" /> 
+                          <stop offset={starVal} stopColor="white" />
+                        </linearGradient>
+                      </defs>
+                      <path stroke="gold" strokeWidth="1" fill={`url(#${starId})`} d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                  );
+                }
+              })}
+            </div>
           </div>
           <div className="flex gap-2">
             <Button 

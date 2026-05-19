@@ -32,7 +32,34 @@
   src: url('/src/assets/fonts/roboto-v51-latin-regular.woff2') format('woff2'); 
 }
 
+@utility max-w-recipe-dialog {
+  max-width: calc(100% - var(--spacing) * 5.8);
+  @media (min-width: 350px) { max-width: calc(100% - var(--spacing) * 4.5); }
+  @media (min-width: 360px) { max-width: calc(100% - var(--spacing) * 3); }
+  @media (min-width: 365px) { max-width: calc(100% - var(--spacing) * 1.5); }
+  @media (min-width: 370px) { max-width: calc(100% - var(--spacing) * 0.5); }
+  @media (min-width: 380px) { max-width: calc(100%); }
+}
+
+@utility max-w-recipe-dialog-header {
+  max-width: calc(94%);
+  @media (min-width: 350px) { max-width: calc(96%); }
+  @media (min-width: 360px) { max-width: calc(97.5%); }
+  @media (min-width: 365px) { max-width: calc(99%); }
+  @media (min-width: 370px) { max-width: calc(100%); }
+
+}
+
 @theme inline {
+
+    --breakpoint-4xs: 21.875rem;
+    --breakpoint-3xs: 22.5rem;
+    --breakpoint-2xs: 23.125rem;
+    --breakpoint-xs: 23.75rem;
+
+    
+
+
     --color-mydarkgreen: #0b4518;
     --color-mydarkgreentransparent: #0b451880;
     --color-mylightgreen: oklch(76.8% 0.233 130.85);
