@@ -37,11 +37,11 @@ npm i -D ts-node
 npm i -D eslint
 # Configs: JS, To check syntax and find problems, JS modules, None of these, Yes, Node, JS, Yes
 npx eslint --init
+JavaScript, To check syntax and find problems, JavaScript modules, None of these, Yes, Browser, JavaScript
 # Append into the extends of eslint.config.js
 , ...tseslint.configs.strict
 # Execute code check
 npx eslint .
-
 # Include into "scripts" of package.json
 "lint": "eslint ."
 npm run lint

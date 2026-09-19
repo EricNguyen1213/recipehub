@@ -114,7 +114,9 @@ export default function NavBar({ isSideMenuOpen, setIsSideMenuOpen } : NavBarPro
             </div>
             <div className="flex gap-2 my-auto">
               <Button className="text-base" variant="homeLight" size="sm">Sign In</Button>
-              <Button className="text-base" variant="homeDark" size="sm">Sign Up</Button>
+              <Link to="/register" reloadDocument>
+                <Button className="text-base" variant="homeDark" size="sm">Sign Up</Button>
+              </Link>
             </div>
           </div>
         </div>

@@ -32,6 +32,8 @@ const buttonVariants = cva(
           "font-desc text-white underline-offset-4 hover:underline active:underline",
         recipeDialogOutline:
           "sm:text-base capitalize active:not-aria-[haspopup]:-translate-y-px rounded-none rounded-t-lg border-border border-b-0 bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:bg-transparent dark:hover:bg-input/30",
+        inlineLink:
+          "text-primary underline-offset-4 hover:underline inline-flex h-auto p-0 text-base align-baseline"
       },
       size: {
         default:
@@ -45,6 +47,7 @@ const buttonVariants = cva(
         "icon-lg": "size-10",
         homeSize: "py-3 px-10 text-2xl mt-5",
         footSize: "text-lg",
+        none: ""
       },
     },
     defaultVariants: {

@@ -1,30 +1,30 @@
 import express, {type Express} from "express";
-import cors from 'cors';
-import type { Auth } from "./utils/auth.ts";
-import { toNodeHandler } from "better-auth/node";
 import morgan from "morgan";
+import cors from 'cors';
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "./lib/auth.ts";
+import { env } from "./lib/utils.ts";
 
-function createApp(auth : Auth): Express {
+
+export default function createApp(): Express {
     const app = express();
 
     app.use(cors({
-        origin: "http://localhost:5173", // Allow only your frontend
+        origin: env.FRONTEND_URL, // Allow only your frontend
         credentials: true,               // Required for Better Auth cookies to work
         methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
         allowedHeaders: ["Content-Type", "Authorization"]
     }));
 
-    app.all('/api/auth/{*any}', toNodeHandler(auth));
-
     app.use(morgan("dev"));
 
+    app.all('/api/auth/{*any}', toNodeHandler(auth));
+    
     app.use(express.json());
 
-    app.get("/api/", (req, res, next) => {
+    app.get("/api/", (req, res) => {
         res.status(200).json({message: "hello world"});
     });
-
+    
     return app;
 }
-
-export default createApp;

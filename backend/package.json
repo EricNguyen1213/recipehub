@@ -26,12 +26,13 @@
     "typescript-eslint": "^8.58.1"
   },
   "dependencies": {
-    "better-auth": "^1.6.2",
+    "better-auth": "^1.6.20",
     "cors": "^2.8.6",
     "envalid": "^8.1.1",
     "express": "^5.2.1",
     "mongodb": "^7.1.1",
     "mongoose": "^9.4.1",
-    "morgan": "^1.10.1"
+    "morgan": "^1.10.1",
+    "resend": "^6.18.1"
   }
 }

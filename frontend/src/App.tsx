@@ -1,11 +1,14 @@
-import NavBar from "./components/navbar/navbar";
+import NavBar from "./components/layout/navbar";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from "./pages/Home";
 import NotFoundPage from "./pages/NotFoundPage";
-import Footer from "./components/footer/footer";
+import Footer from "./components/layout/footer";
 import Profile from "./components/Profile";
 import Explore from "./components/Explore";
 import { useEffect, useState } from "react";
+import Register from "./components/Register";
+import VerifyEmailBridge from "./components/auth/verify-email-bridge";
+import { Toaster } from "./components/ui/sonner";
 
 
 function useMediaQuery(query: string) {
@@ -56,9 +59,19 @@ export default function App() {
               />
             } 
           />
+          <Route 
+            path='/register' 
+            element={
+              <Register 
+                overMdSize={overMdSize}
+              />
+            } 
+          />
+          <Route path="/verify-email-bridge" element={<VerifyEmailBridge />} />
           <Route path='/*' element={<NotFoundPage />} />
         </Routes>
         <Footer />
+        <Toaster richColors closeButton position="bottom-left" />
       </div>
     </BrowserRouter>
   )
